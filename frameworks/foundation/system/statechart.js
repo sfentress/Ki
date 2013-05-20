@@ -960,6 +960,7 @@ Ki.StatechartManager = {
     var statechartHandledEvent = NO,
         eventHandled = NO,
         currentStates = this.get('currentStates').slice(),
+        checkedStates = {},
         len = 0,
         i = 0,
         state = null,
@@ -990,7 +991,10 @@ Ki.StatechartManager = {
       state = currentStates[i];
       if (!state.get('isCurrentState')) continue;
       while (!eventHandled && state) {
-        eventHandled = state.tryToHandleEvent(event, arg1, arg2);
+        if (!checkedStates[state.get('fullPath')]) {
+          eventHandled = state.tryToHandleEvent(event, arg1, arg2);
+          checkedStates[state.get('fullPath')] = true;
+        }
         if (!eventHandled) state = state.get('parentState');
         else statechartHandledEvent = YES;
       }
